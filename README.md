@@ -28,7 +28,7 @@ Redes sociais ficam ocultas enquanto a URL estiver vazia.
 - Categorias: `src/content/categories.ts`
 - Serviços: `src/content/services/<categoria>.ts` — adicionar um serviço ali cria automaticamente rota, menu,
   sitemap, opção no formulário e redirects das URLs antigas (`legacyUrls`).
-- `needsReview` marca textos atualizados na migração; o build gera `migration/REVIEW.md` para o cliente validar.
+- `needsReview` marca textos atualizados na migração; o build gera `migration/REVIEW.md` (local, fora do git) para o cliente validar.
 
 ## Deploy — GitHub Pages
 
@@ -58,11 +58,11 @@ O mesmo `dist/` funciona em qualquer hospedagem estática, com 301 reais:
 
 | Hospedagem | Arquivo |
 |---|---|
-| Vercel | `vercel.json` (raiz do projeto, `cleanUrls` ativo) |
+| Vercel | `vercel.json` (gerado na raiz pelo build, fora do git — gere antes de conectar à Vercel) |
 | Netlify | `dist/_redirects` |
 | Apache / cPanel | `dist/.htaccess` |
 
 ## Migração
 
-`npm run scrape` baixa texto e imagens do site antigo para `migration/` (imagens ficam fora do git).
-`migration/INVENTORY.md` lista as páginas antigas; o teste `src/lib/redirects.test.ts` garante que todas têm redirect.
+As URLs do site antigo (Wix) estão em `src/content/legacy.ts`; o teste `src/lib/redirects.test.ts` garante que
+todas têm redirect para uma página nova.

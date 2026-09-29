@@ -62,7 +62,7 @@ writeFileSync(
   ].join('\n'),
 )
 
-// Vercel (read from the project root at deploy time)
+// Vercel reads it from the project root; generated on every build and not versioned
 writeFileSync(
   'vercel.json',
   JSON.stringify(
@@ -79,7 +79,8 @@ writeFileSync(
   ) + '\n',
 )
 
-// Items the client must validate before launch
+// Items the client must validate before launch (local file, not versioned)
+mkdirSync('migration', { recursive: true })
 const review = services.filter((s) => s.needsReview)
 writeFileSync(
   join('migration', 'REVIEW.md'),

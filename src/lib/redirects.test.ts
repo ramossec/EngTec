@@ -1,7 +1,6 @@
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { allRoutes } from '../content'
+import { legacyWixPaths } from '../content/legacy'
 import { buildRedirects, redirectPageFile, redirectPageHtml } from './redirects'
 
 describe('static redirect pages (GitHub Pages has no server-side 301)', () => {
@@ -26,17 +25,13 @@ describe('static redirect pages (GitHub Pages has no server-side 301)', () => {
   })
 })
 
-const legacyPaths: string[] = readdirSync('migration/pages')
-  .map((f) => JSON.parse(readFileSync(join('migration/pages', f), 'utf8')).path as string)
-  .filter((p) => p !== '/')
-
 describe('buildRedirects', () => {
   const redirects = buildRedirects()
   const from = new Set(redirects.map((r) => r.from))
   const routes = new Set(allRoutes())
 
   it('covers every page of the legacy Wix site', () => {
-    const missing = legacyPaths.filter((p) => !from.has(p))
+    const missing = legacyWixPaths.filter((p) => !from.has(p))
     expect(missing).toEqual([])
   })
 

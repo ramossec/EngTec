@@ -1,5 +1,5 @@
 # Dependências
-node_modules/
+node_modules
 
 # Build e artefatos gerados
 dist/
@@ -14,8 +14,12 @@ coverage/
 .env.*
 !.env.example
 
-# Imagens brutas do Wix (15 MB); as otimizadas ficam em public/images
-migration/images/
+# Gerados a cada build (npm run build)
+vercel.json
+
+# Material interno da migração do Wix (dump, scraper) e do processo de desenvolvimento (fica só local)
+migration/
+docs/superpowers/
 
 # Logs
 *.log
