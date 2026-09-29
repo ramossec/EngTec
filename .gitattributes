@@ -1,0 +1,7 @@
+# LF no repositório e no checkout (o CI roda em Linux; CNAME e scripts precisam de LF)
+* text=auto eol=lf
+
+*.webp binary
+*.jpg binary
+*.png binary
+*.woff2 binary

@@ -1,8 +1,33 @@
-node_modules
-dist
-.vite-react-ssg-temp
+# Dependências
+node_modules/
+
+# Build e artefatos gerados
+dist/
+dist-ssr/
+.vite-react-ssg-temp/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# Variáveis de ambiente (a chave do Web3Forms vai em Secrets do GitHub)
 .env
-.env.local
-migration/images
-coverage
+.env.*
+!.env.example
+
+# Imagens brutas do Wix (15 MB); as otimizadas ficam em public/images
+migration/images/
+
+# Logs
 *.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
