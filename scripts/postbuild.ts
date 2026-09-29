@@ -1,11 +1,11 @@
 /**
  * Runs after `vite-react-ssg build`: sitemap, robots, 404 page, legacy redirects
- * for Vercel / Netlify / Apache, and the client review list.
+ * for GitHub Pages / Vercel / Netlify / Apache, and the client review list.
  */
-import { copyFileSync, existsSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { copyFileSync, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { allRoutes, services, site } from '../src/content'
-import { buildRedirects } from '../src/lib/redirects'
+import { buildRedirects, redirectPageFile, redirectPageHtml } from '../src/lib/redirects'
 
 const DIST = 'dist'
 const today = new Date().toISOString().slice(0, 10)
@@ -23,8 +23,25 @@ writeFileSync(join(DIST, 'sitemap.xml'), sitemap + '\n')
 
 writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`)
 
-const notFound = join(DIST, '404', 'index.html')
-if (existsSync(notFound)) copyFileSync(notFound, join(DIST, '404.html'))
+if (!existsSync(join(DIST, '404.html'))) throw new Error('dist/404.html não foi gerado')
+
+// A page that is also a folder (servicos.html + servicos/) gets an index.html twin,
+// so hosts that redirect /servicos to /servicos/ still find the page.
+for (const route of allRoutes()) {
+  const dir = join(DIST, route)
+  if (route !== '/' && existsSync(dir) && statSync(dir).isDirectory()) {
+    copyFileSync(`${dir}.html`, join(dir, 'index.html'))
+  }
+}
+
+// GitHub Pages: no server-side redirects, so each legacy URL gets a redirect page.
+// Only decoded paths are written; the host decodes percent-encoded requests.
+const pageRedirects = redirects.filter((r) => r.from === decodeURI(r.from))
+for (const r of pageRedirects) {
+  const file = join(DIST, redirectPageFile(r.from))
+  mkdirSync(dirname(file), { recursive: true })
+  writeFileSync(file, redirectPageHtml(r.to))
+}
 
 // Netlify
 writeFileSync(join(DIST, '_redirects'), redirects.map((r) => `${r.from}  ${r.to}  301`).join('\n') + '\n')
@@ -37,6 +54,10 @@ writeFileSync(
     'ErrorDocument 404 /404.html',
     'RewriteEngine On',
     ...redirects.map((r) => `RewriteRule ^${escapeRe(r.from.slice(1))}/?$ ${r.to} [R=301,L,NE]`),
+    '# /page → page.html (clean URLs), after the legacy 301s',
+    'RewriteCond %{REQUEST_FILENAME} !-f',
+    'RewriteCond %{REQUEST_FILENAME}.html -f',
+    'RewriteRule ^(.+?)/?$ $1.html [L]',
     '',
   ].join('\n'),
 )
@@ -49,6 +70,7 @@ writeFileSync(
       $schema: 'https://openapi.vercel.sh/vercel.json',
       buildCommand: 'npm run build',
       outputDirectory: 'dist',
+      cleanUrls: true,
       trailingSlash: false,
       redirects: redirects.map((r) => ({ source: r.from, destination: r.to, permanent: true })),
     },

@@ -7,7 +7,8 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   ssgOptions: {
-    dirStyle: 'nested',
+    // page.html instead of page/index.html: GitHub Pages serves /page without a trailing-slash redirect.
+    dirStyle: 'flat',
     formatting: 'none',
   },
   test: {

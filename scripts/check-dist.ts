@@ -1,18 +1,20 @@
 /**
  * Verifies the static build: one pre-rendered HTML per route with title,
- * description and canonical, and no internal link pointing at a missing page.
+ * description and canonical, no internal link pointing at a missing page, and a
+ * redirect page for every legacy URL (GitHub Pages has no server-side redirects).
  */
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { allRoutes } from '../src/content'
+import { buildRedirects, redirectPageFile } from '../src/lib/redirects'
 
 const DIST = 'dist'
 const routes = allRoutes()
 const errors: string[] = []
 
-const fileFor = (route: string) => (route === '/' ? join(DIST, 'index.html') : join(DIST, route, 'index.html'))
+const fileFor = (route: string) => (route === '/' ? join(DIST, 'index.html') : join(DIST, `${route}.html`))
 const routeSet = new Set(routes)
-const staticFiles = (href: string) => existsSync(join(DIST, href))
+const staticFiles = (href: string) => existsSync(join(DIST, href)) || existsSync(join(DIST, `${href}.html`))
 
 for (const route of routes) {
   const file = fileFor(route)
@@ -32,7 +34,13 @@ for (const route of routes) {
   }
 }
 
-for (const f of ['sitemap.xml', 'robots.txt', '404.html', '_redirects', '.htaccess']) {
+for (const r of buildRedirects()) {
+  const file = join(DIST, redirectPageFile(r.from))
+  if (!existsSync(file)) errors.push(`redirect ausente: ${r.from} (${file})`)
+  else if (!readFileSync(file, 'utf8').includes(`url=${r.to}"`)) errors.push(`redirect errado: ${r.from}`)
+}
+
+for (const f of ['sitemap.xml', 'robots.txt', '404.html', 'CNAME', '.nojekyll', '_redirects', '.htaccess']) {
   if (!existsSync(join(DIST, f))) errors.push(`arquivo ausente: ${f}`)
 }
 
