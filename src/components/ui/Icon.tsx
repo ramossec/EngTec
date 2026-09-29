@@ -1,0 +1,62 @@
+import {
+  Accessibility,
+  AlertTriangle,
+  ArrowUpDown,
+  Building2,
+  ClipboardList,
+  Cog,
+  DoorOpen,
+  Droplets,
+  Factory,
+  FileCheck2,
+  Flame,
+  Gauge,
+  GraduationCap,
+  Hammer,
+  HardHat,
+  Map,
+  Scale,
+  ShieldCheck,
+  Snowflake,
+  Truck,
+  Users,
+  Volume2,
+  Wind,
+  Zap,
+  type LucideIcon,
+  type LucideProps,
+} from 'lucide-react'
+import type { IconName } from '../../content/types'
+
+const icons: Record<IconName, LucideIcon> = {
+  cog: Cog,
+  building: Building2,
+  'hard-hat': HardHat,
+  flame: Flame,
+  'graduation-cap': GraduationCap,
+  'file-check': FileCheck2,
+  gauge: Gauge,
+  wind: Wind,
+  snowflake: Snowflake,
+  droplets: Droplets,
+  volume: Volume2,
+  clipboard: ClipboardList,
+  scale: Scale,
+  zap: Zap,
+  shield: ShieldCheck,
+  users: Users,
+  map: Map,
+  accessibility: Accessibility,
+  truck: Truck,
+  factory: Factory,
+  door: DoorOpen,
+  lungs: Wind,
+  alert: AlertTriangle,
+  hammer: Hammer,
+  'arrow-up-down': ArrowUpDown,
+}
+
+export function Icon({ name, ...props }: { name: IconName } & LucideProps) {
+  const Component = icons[name]
+  return <Component aria-hidden="true" strokeWidth={1.75} {...props} />
+}

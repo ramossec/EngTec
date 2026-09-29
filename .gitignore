@@ -1,0 +1,8 @@
+node_modules
+dist
+.vite-react-ssg-temp
+.env
+.env.local
+migration/images
+coverage
+*.log
