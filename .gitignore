@@ -20,7 +20,7 @@ vercel.json
 # Material interno da migração do Wix (dump, scraper) e do processo de desenvolvimento (fica só local)
 migration
 docs
-scripts/
+scripts/scrape-wix.ts
 
 # Logs
 *.log
