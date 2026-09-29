@@ -18,8 +18,9 @@ coverage/
 vercel.json
 
 # Material interno da migração do Wix (dump, scraper) e do processo de desenvolvimento (fica só local)
-migration/
-docs/superpowers/
+migration
+docs
+scripts/
 
 # Logs
 *.log
